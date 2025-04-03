@@ -26,38 +26,35 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout repo
+      - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Setup do Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install Poetry
+      - name: Instalar o Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Install dependencies
+      - name: Instalar dependências
         run: |
-          poetry install --no-interaction --no-root
+          poetry install --no-interaction
 
-      - name: Run tests with coverage
+      - name: Adicionar coverage (se ainda não estiver no lock)
+        run: |
+          poetry add --dev coverage
+
+      - name: Rodar testes com cobertura
         run: |
           poetry run coverage run -m pytest
           poetry run coverage report
           poetry run coverage xml
-          poetry run coverage html
 
-      - name: Upload coverage XML report
+      - name: Fazer upload do relatório de cobertura
         uses: actions/upload-artifact@v3
         with:
-          name: coverage-xml
+          name: coverage-report
           path: coverage.xml
-
-      - name: Upload HTML coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: htmlcov
-          path: htmlcov/
