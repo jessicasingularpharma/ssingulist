@@ -1,11 +1,17 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
 
-app = FastAPI(
-    title="Sistema de Controle de Suprimentos",
-    description="API para gerenciamento de solicitações, estoques e integração com ERP",
-    version="0.1.0",
-)
+from app.routers import solicitacao
+from app.routers import auth  # ⬅️ Importa as rotas de autenticação
+
+load_dotenv()
+
+app = FastAPI()
+
+# Inclui as rotas
+app.include_router(solicitacao.router)
+app.include_router(auth.router)  # ⬅️ Registra as rotas de login e /usuarios/me
 
 @app.get("/")
-def read_root():
-    return {"message": "🚀 Backend da API de suprimentos está rodando!"}
+def root():
+    return {"message": "API online!"}

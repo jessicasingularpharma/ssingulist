@@ -1,6 +1,6 @@
 # backend/app/auth/auth_handler.py
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 import os
@@ -14,6 +14,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+
 def criar_hash_senha(senha: str) -> str:
     return pwd_context.hash(senha)
 
@@ -22,7 +23,7 @@ def verificar_senha(senha: str, hash: str) -> bool:
 
 def criar_token_acesso(data: dict, expira_em_min: int = ACCESS_TOKEN_EXPIRE_MINUTES):
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=expira_em_min)
+    expire = datetime.now(timezone.utc) + timedelta(minutes=expira_em_min)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -32,3 +33,10 @@ def decodificar_token(token: str):
         return payload.get("sub")
     except JWTError:
         return None
+
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def gerar_hash_senha(senha: str) -> str:
+    return pwd_context.hash(senha)
