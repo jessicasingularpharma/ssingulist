@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: supply-control-api
+    env: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: ./backend/Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: ENV_FILE_PATH
+        value: /app/.env
+      - key: DATABASE_URL
+        value: postgres://user:password@host:5432/dbname
