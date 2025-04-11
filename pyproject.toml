@@ -30,7 +30,16 @@ python-jose = {extras = ["cryptography"], version = "^3.4.0"}
 black = "^24.3.0"
 isort = "^5.13.2"
 pytest = "^8.1.1"
+<<<<<<< HEAD
 coverage = "^7.8.0"
+=======
+pre-commit = "^4.2.0"
+flake8 = "^7.2.0"
+mypy = "^1.15.0"
+httpx = "^0.28.1"
+coverage = "^7.4.4"
+pytest-cov = "^6.1.0"
+>>>>>>> 90240b2 ( atualização:api e frontend)
 
 [build-system]
 requires = ["poetry-core"]
