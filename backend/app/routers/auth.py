@@ -1,13 +1,15 @@
+# backend/app/routers/auth.py
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.db.database import get_db
-from app.auth.auth_handler import criar_token_acesso, verificar_senha
 from app.auth.auth_bearer import get_current_user
-from app.services.usuario_service import buscar_usuario_por_codigo, criar_usuario
-
-from app.schemas.usuario import UsuarioLogin, UsuarioOut, UsuarioCreate
+from app.auth.auth_handler import criar_token_acesso
+from app.core.security import verificar_senha
+from app.db.database import get_db
 from app.models.usuario import Usuario
+from app.schemas.usuario import UsuarioLogin, UsuarioOut
+from app.services.usuario_service import buscar_usuario_por_codigo
 
 router = APIRouter(tags=["Autenticação"])
 
@@ -18,28 +20,17 @@ def login(login_data: UsuarioLogin, db: Session = Depends(get_db)):
 
     if not usuario:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuário não encontrado no sistema"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado"
         )
 
     if not verificar_senha(login_data.senha, usuario.hashed_password):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Senha inválida"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Senha inválida"
         )
 
-    token = criar_token_acesso({"sub": str(usuario.codigo_funcionario)})
+    # 👇 Aqui o print pra te ajudar a ver se é admin
+    print(f"🔐 Usuário autenticado: {usuario.nome} | Admin: {usuario.is_admin}")
+
+    # Gera token com sub e is_admin
+    token = criar_token_acesso(usuario)
     return {"access_token": token, "token_type": "bearer"}
-
-
-@router.get("/usuarios/me", response_model=UsuarioOut)
-def get_me(usuario: Usuario = Depends(get_current_user)):
-    return usuario
-
-
-@router.post("/usuarios", response_model=UsuarioOut, status_code=status.HTTP_201_CREATED)
-def registrar_usuario(usuario_data: UsuarioCreate, db: Session = Depends(get_db)):
-    """
-    Cria um novo usuário autenticado, verificando código do funcionário no Firebird.
-    """
-    return criar_usuario(db, usuario_data)

@@ -1,8 +1,9 @@
 # backend/app/main.py
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
+
 from app.routers import minhas_solicitacoes
 
 # Carrega variáveis de ambiente
@@ -21,16 +22,9 @@ app.add_middleware(
 )
 
 # Importa todos os routers
-from app.routers import (
-    auth,
-    solicitacao,
-    usuario,
-    produto_router,
-    ordem_compra,
-    ordem_compra_detalhes,
-    minhas_solicitacoes,
-    debug_ordens,
-)
+from app.routers import (auth, debug_ordens, minhas_solicitacoes, ordem_compra,
+                         ordem_compra_detalhes, produto_router, solicitacao,
+                         usuario)
 
 # Registra os routers
 app.include_router(auth.router)
@@ -41,6 +35,7 @@ app.include_router(ordem_compra.router)
 app.include_router(ordem_compra_detalhes.router)
 app.include_router(minhas_solicitacoes.router)
 app.include_router(debug_ordens.router)
+
 
 # Rota raiz para teste
 @app.get("/")

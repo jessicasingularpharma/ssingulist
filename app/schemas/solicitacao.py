@@ -1,7 +1,8 @@
-from pydantic import BaseModel
-from typing import List
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 # Em vez de importar no início, vamos importar diretamente dentro da função
 class SolicitacaoItemCreate(BaseModel):
@@ -9,6 +10,7 @@ class SolicitacaoItemCreate(BaseModel):
     nome_produto: str
     quantidade: str
     unidade: str
+
 
 class SolicitacaoItemOut(BaseModel):
     id: int

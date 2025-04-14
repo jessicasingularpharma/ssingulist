@@ -1,17 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from typing import List
 
-from app.db.database import get_db
-from app.models.ordem_compra import OrdemCompra, OrdemCompraItem, OrdemCompraDetalhes
-from app.schemas.ordem_compra import (
-    OrdemCompraOut,
-    OrdemCompraDetalhesUpdate,
-    OrdemCompraStatusUpdate,
-    OrdemCompraCreate,
-)
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
 from app.auth.auth_bearer import get_current_user
+from app.db.database import get_db
+from app.models.ordem_compra import (OrdemCompra, OrdemCompraDetalhes,
+                                     OrdemCompraItem)
 from app.models.usuario import Usuario
+from app.schemas.ordem_compra import (OrdemCompraCreate,
+                                      OrdemCompraDetalhesUpdate,
+                                      OrdemCompraOut, OrdemCompraStatusUpdate)
 from app.services.ordem_compra_service import criar_ordem_compra
 
 router = APIRouter(prefix="/ordem-compra", tags=["Ordem de Compra"])
@@ -21,22 +20,26 @@ router = APIRouter(prefix="/ordem-compra", tags=["Ordem de Compra"])
 def listar_ordens_completas(db: Session = Depends(get_db)):
     ordens = db.query(OrdemCompra).all()
     for ordem in ordens:
-        ordem.tipo = "suprimentos"  # pode ser substituído por campo real se adicionado no banco
+        ordem.tipo = (
+            "suprimentos"  # pode ser substituído por campo real se adicionado no banco
+        )
     return ordens
 
 
-@router.post("/criar", response_model=OrdemCompraOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/criar", response_model=OrdemCompraOut, status_code=status.HTTP_201_CREATED
+)
 def criar_ordem(
     dados: OrdemCompraCreate,
     db: Session = Depends(get_db),
-    usuario: Usuario = Depends(get_current_user)
+    usuario: Usuario = Depends(get_current_user),
 ):
     if dados.solicitante_id != usuario.id:
         raise HTTPException(status_code=403, detail="Solicitante inválido.")
 
     nova_ordem = OrdemCompra(
         solicitante_id=dados.solicitante_id,
-        tipo="suprimentos"  # ✅ tipo definido como suprimentos
+        tipo="suprimentos",  # ✅ tipo definido como suprimentos
     )
 
     nova_ordem = criar_ordem_compra(db, nova_ordem)
@@ -102,10 +105,14 @@ def deletar_ordem(
     db: Session = Depends(get_db),
     usuario: Usuario = Depends(get_current_user),
 ):
-    ordem = db.query(OrdemCompra).filter(
-        OrdemCompra.id == ordem_id,
-        OrdemCompra.solicitante_id == usuario.id,
-    ).first()
+    ordem = (
+        db.query(OrdemCompra)
+        .filter(
+            OrdemCompra.id == ordem_id,
+            OrdemCompra.solicitante_id == usuario.id,
+        )
+        .first()
+    )
     if not ordem:
         raise HTTPException(status_code=404, detail="Ordem não encontrada")
     db.delete(ordem)

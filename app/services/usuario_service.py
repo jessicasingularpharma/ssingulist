@@ -4,13 +4,14 @@ import secrets
 import string
 from datetime import datetime
 
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
 from app.core.email_utils import enviar_email
 from app.core.security import hash_password
 from app.integration.firebird_db.firebird import buscar_funcionario_por_nome
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioCreate, UsuarioRegistro
-from fastapi import HTTPException
-from sqlalchemy.orm import Session
 
 
 def buscar_usuario_por_codigo(db: Session, codigo_funcionario: int):

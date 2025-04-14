@@ -1,12 +1,13 @@
 import random
 
 import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy.orm import Session
+
 from app.auth.auth_handler import criar_token_acesso
 from app.db.database import SessionLocal
 from app.main import app
 from app.models.usuario import Usuario
-from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
 
 client = TestClient(app)
 

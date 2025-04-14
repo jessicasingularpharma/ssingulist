@@ -6,13 +6,12 @@ authors = ["Jessica <seu-email@example.com>"]
 license = "MIT"
 packages = [{ include = "app" }]
 
-
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.110.0"
 sqlalchemy = "^2.0.28"
 psycopg2-binary = "^2.9.9"
-uvicorn = {extras = ["standard"], version = "^0.29.0"}
+uvicorn = { extras = ["standard"], version = "^0.29.0" }
 pydantic = "^2.6.4"
 python-dotenv = "^1.0.1"
 celery = "^5.3.6"
@@ -23,28 +22,30 @@ email-validator = "^2.1.0.post1"
 pandas = "^2.2.1"
 pyodbc = "^5.1.0"
 firebirdsql = "^1.0.4"
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-python-jose = {extras = ["cryptography"], version = "^3.4.0"}
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+python-jose = { extras = ["cryptography"], version = "^3.4.0" }
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.3.0"
 isort = "^5.13.2"
 pytest = "^8.1.1"
-<<<<<<< HEAD
-coverage = "^7.8.0"
-=======
+coverage = "^7.4.4"
 pre-commit = "^4.2.0"
 flake8 = "^7.2.0"
 mypy = "^1.15.0"
 httpx = "^0.28.1"
-coverage = "^7.4.4"
 pytest-cov = "^6.1.0"
->>>>>>> 90240b2 ( atualização:api e frontend)
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.group.dev.dependencies]
-coverage = "^7.4.4"
 
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 88

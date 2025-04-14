@@ -23,10 +23,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # tempo em minutos (1h)
 
     # Configuração do carregamento de variáveis .env
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        extra="allow"
-    )
+    model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:

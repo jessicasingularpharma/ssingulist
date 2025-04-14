@@ -1,14 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from typing import List
 
-from app.db.database import get_db
-from app.models.ordem_compra import OrdemCompra, OrdemCompraDetalhes
-from app.schemas.ordem_compra import OrdemCompraOut, OrdemCompraDetalhesUpdate, OrdemCompraStatusUpdate
-from app.models.ordem_compra import OrdemCompraStatusHistorico
-from app.schemas.ordem_compra import OrdemCompraStatusHistoricoOut
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
 from app.auth.auth_bearer import get_current_user
+from app.db.database import get_db
+from app.models.ordem_compra import (
+    OrdemCompra,
+    OrdemCompraDetalhes,
+    OrdemCompraStatusHistorico,
+)
 from app.models.usuario import Usuario
+from app.schemas.ordem_compra import (
+    OrdemCompraDetalhesUpdate,
+    OrdemCompraOut,
+    OrdemCompraStatusHistoricoOut,
+    OrdemCompraStatusUpdate,
+)
 from app.services import ordem_compra_service  # ✅
 
 router = APIRouter(prefix="/ordem-compra", tags=["Ordem de Compra"])
@@ -24,9 +32,7 @@ def listar_ordens_completas(db: Session = Depends(get_db)):
 
 @router.put("/atualizar-detalhes/{ordem_id}", response_model=OrdemCompraOut)
 def atualizar_detalhes_ordem(
-    ordem_id: int,
-    detalhes: OrdemCompraDetalhesUpdate,
-    db: Session = Depends(get_db)
+    ordem_id: int, detalhes: OrdemCompraDetalhesUpdate, db: Session = Depends(get_db)
 ):
     ordem = db.query(OrdemCompra).filter(OrdemCompra.id == ordem_id).first()
     if not ordem:
@@ -49,13 +55,10 @@ def atualizar_status_ordem(
     ordem_id: int,
     status_data: OrdemCompraStatusUpdate,
     db: Session = Depends(get_db),
-    usuario: Usuario = Depends(get_current_user)
+    usuario: Usuario = Depends(get_current_user),
 ):
     ordem = ordem_compra_service.atualizar_status_ordem_com_historico(
-        db=db,
-        ordem_id=ordem_id,
-        novo_status=status_data.status,
-        usuario_id=usuario.id
+        db=db, ordem_id=ordem_id, novo_status=status_data.status, usuario_id=usuario.id
     )
 
     if not ordem:
@@ -68,17 +71,19 @@ def atualizar_status_ordem(
 def deletar_ordem(
     ordem_id: int,
     db: Session = Depends(get_db),
-    usuario: Usuario = Depends(get_current_user)
+    usuario: Usuario = Depends(get_current_user),
 ):
-    ordem = db.query(OrdemCompra).filter(
-        OrdemCompra.id == ordem_id,
-        OrdemCompra.solicitante_id == usuario.id
-    ).first()
+    ordem = (
+        db.query(OrdemCompra)
+        .filter(OrdemCompra.id == ordem_id, OrdemCompra.solicitante_id == usuario.id)
+        .first()
+    )
     if not ordem:
         raise HTTPException(status_code=404, detail="Ordem não encontrada")
     db.delete(ordem)
     db.commit()
     return
+
 
 @router.get("/{ordem_id}/historico", response_model=List[OrdemCompraStatusHistoricoOut])
 def listar_historico_status(

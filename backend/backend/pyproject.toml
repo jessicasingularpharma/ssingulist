@@ -1,0 +1,38 @@
+[tool.poetry]
+name = "supply-control-backend"
+version = "0.1.0"
+description = "Sistema de controle de suprimentos - backend com FastAPI"
+authors = ["Jessica <seu-email@example.com>"]
+license = "MIT"
+packages = [{ include = "app" }]
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.110.0"
+sqlalchemy = "^2.0.28"
+psycopg2-binary = "^2.9.9"
+uvicorn = {extras = ["standard"], version = "^0.29.0"}
+pydantic = "^2.6.4"
+python-dotenv = "^1.0.1"
+celery = "^5.3.6"
+redis = "^5.0.3"
+aiofiles = "^23.2.1"
+python-multipart = "^0.0.9"
+email-validator = "^2.1.0.post1"
+pandas = "^2.2.1"
+pyodbc = "^5.1.0"
+firebirdsql = "^1.0.4"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.3.0"
+isort = "^5.13.2"
+pytest = "^8.1.1"
+pre-commit = "^4.2.0"
+flake8 = "^7.2.0"
+mypy = "^1.15.0"
+httpx = "^0.28.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,6 +1,8 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
+
 from app.db.base import Base
 
 
@@ -18,5 +20,9 @@ class Usuario(Base):
     criado_em = Column(DateTime, default=datetime.utcnow)
 
     # Relacionamentos
-    ordens_compra = relationship("OrdemCompra", back_populates="solicitante")  # Para ordens de compra
-    solicitacoes_lab = relationship("SolicitacaoLaboratorio", back_populates="solicitante")  # Para solicitações do laboratório
+    ordens_compra = relationship(
+        "OrdemCompra", back_populates="solicitante"
+    )  # Para ordens de compra
+    solicitacoes_lab = relationship(
+        "SolicitacaoLaboratorio", back_populates="solicitante"
+    )  # Para solicitações do laboratório

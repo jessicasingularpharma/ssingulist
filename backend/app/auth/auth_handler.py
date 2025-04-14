@@ -1,42 +1,34 @@
 # backend/app/auth/auth_handler.py
 
-from datetime import datetime, timedelta, timezone
-from jose import JWTError, jwt
-from passlib.context import CryptContext
-import os
-from dotenv import load_dotenv
+# auth_handler.py
+from datetime import datetime, timedelta
 
-load_dotenv()
+from jose import jwt
 
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "secret")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+from app.core.config import settings
+from app.models.usuario import Usuario
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+SECRET_KEY = settings.JWT_SECRET_KEY
+ALGORITHM = settings.ALGORITHM
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 
 
-def criar_hash_senha(senha: str) -> str:
-    return pwd_context.hash(senha)
+def criar_token_acesso(usuario: Usuario) -> str:
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    payload = {
+        "sub": str(usuario.id),
+        "codigo_funcionario": usuario.codigo_funcionario,
+        "is_admin": usuario.is_admin,
+        "exp": expire,
+    }
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-def verificar_senha(senha: str, hash: str) -> bool:
-    return pwd_context.verify(senha, hash)
-
-def criar_token_acesso(data: dict, expira_em_min: int = ACCESS_TOKEN_EXPIRE_MINUTES):
-    to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=expira_em_min)
-    to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def decodificar_token(token: str):
+    from jose import JWTError
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload.get("sub")
+        return payload
     except JWTError:
         return None
-
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-def gerar_hash_senha(senha: str) -> str:
-    return pwd_context.hash(senha)

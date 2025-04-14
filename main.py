@@ -1,6 +1,7 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
+
 from app.routers import test_minhas  # <- ao invés de minhas_solicitacoes
 from app.routers import produto_router
 
@@ -18,15 +19,9 @@ app.add_middleware(
 )
 
 # ✅ Agora sim importa os routers DEPOIS do app estar pronto
-from app.routers import (
-    auth,
-    solicitacao,
-    usuario,
-    produto_router,
-    ordem_compra,
-    ordem_compra_detalhes,
-    #minhas_solicitacoes,
-)
+from app.routers import (auth, ordem_compra,  # minhas_solicitacoes,
+                         ordem_compra_detalhes, produto_router, solicitacao,
+                         usuario)
 
 # ✅ E inclui os routers
 app.include_router(auth.router)
@@ -35,9 +30,10 @@ app.include_router(usuario.router)
 app.include_router(produto_router.router)
 app.include_router(ordem_compra.router)
 app.include_router(ordem_compra_detalhes.router)
-#app.include_router(minhas_solicitacoes.router)
+# app.include_router(minhas_solicitacoes.router)
 app.include_router(test_minhas.router)
 app.include_router(produto_router.router)
+
 
 @app.get("/")
 def root():

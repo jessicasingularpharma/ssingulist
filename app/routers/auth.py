@@ -1,5 +1,8 @@
 # backend/app/routers/auth.py
 
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
 from app.auth.auth_bearer import get_current_user
 from app.auth.auth_handler import criar_token_acesso
 from app.core.security import verificar_senha
@@ -7,11 +10,8 @@ from app.db.database import get_db
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioLogin, UsuarioOut
 from app.services.usuario_service import buscar_usuario_por_codigo
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 
-
-router = APIRouter(tags=["Autenticação"]) 
+router = APIRouter(tags=["Autenticação"])
 
 
 @router.post("/login")
@@ -34,7 +34,3 @@ def login(login_data: UsuarioLogin, db: Session = Depends(get_db)):
     # Gera token com sub e is_admin
     token = criar_token_acesso(usuario)
     return {"access_token": token, "token_type": "bearer"}
-
-
-
-

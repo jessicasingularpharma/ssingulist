@@ -1,5 +1,6 @@
 # Criar estrutura de integração com Firebird para estoque com consultas diretas
-from app.integration.firebird.connection import get_firebird_connection
+from app.integration.firebird_db.connection import get_firebird_connection
+
 
 def buscar_estoque():
     conn = get_firebird_connection()
@@ -10,6 +11,7 @@ def buscar_estoque():
     conn.close()
     return resultados
 
+
 from pathlib import Path
 
 base = Path("/mnt/data/backend/app/integration/firebird")
@@ -17,7 +19,8 @@ base.mkdir(parents=True, exist_ok=True)
 
 # Estoque service com consultas SQL (estrutura inicial)
 estoque_service = base / "estoque_service.py"
-estoque_service.write_text("""
+estoque_service.write_text(
+    """
 import os
 import pyodbc
 
@@ -93,4 +96,5 @@ def buscar_lotes_por_produto(cdpro: int, filial: int = 1):
             "densidade": row[5],
         })
     return lotes
-""")
+"""
+)
